@@ -1,157 +1,175 @@
 # SKILLS.md
 
-Version: 1.0
+Version: 2.0
 
 Project: Fault Registration System
 
-Purpose:
-This document provides project-specific instructions for AI-assisted development. The goal is to ensure that all AI-generated changes remain consistent with the existing architecture, design language, and coding standards while integrating Material UI.
+## Purpose
+
+The goal of this project is to migrate the existing React frontend to Material UI while preserving the current visual appearance and user experience.
+
+The implementation may be completely refactored if necessary, as long as the final application looks and behaves like the original.
 
 ---
 
-# Project Goal
+# Primary Objectives
 
-The objective of this project is to integrate Material UI into the existing React frontend while preserving the current functionality, user experience, and overall project structure.
+Priority order:
 
-The AI should improve the UI without redesigning or restructuring the application.
-
----
-
-# General Rules
-
-- Always inspect the existing project before making any modifications.
-- Preserve the current architecture.
-- Preserve all existing CRUD functionality.
-- Do not modify backend APIs.
-- Do not rename API endpoints.
-- Do not change request or response formats.
-- Keep the existing folder structure.
-- Keep the code clean, readable, and maintainable.
-- Avoid unnecessary refactoring.
-- Only modify files that are directly related to the requested task.
+1. Preserve the current visual design.
+2. Use Material UI for at least 90% of the user interface.
+3. Preserve all existing functionality.
+4. Keep backend compatibility.
+5. Write clean and maintainable React code.
 
 ---
 
-# UI Guidelines
+# Material UI Requirements
 
-The current UI already follows a specific visual identity.
+Material UI should be the primary UI framework used throughout the application.
 
-When integrating Material UI:
+Prefer Material UI components whenever an equivalent exists.
 
-- Preserve the existing dark theme.
-- Preserve the existing purple color palette.
-- Preserve the current layout as much as possible.
-- Preserve spacing and visual hierarchy.
-- Preserve animations if they already exist.
-- Keep the interface responsive.
-- Use Material UI components instead of plain HTML elements whenever appropriate.
-- Reuse existing CSS whenever possible.
-- Do not redesign the application unless explicitly requested.
+The following components should be used whenever appropriate:
 
-The goal is to modernize the implementation, not to change the design.
+- AppBar
+- Toolbar
+- Container
+- Box
+- Grid
+- Stack
+- Card
+- CardContent
+- CardActions
+- Button
+- TextField
+- Typography
+- Chip
+- Dialog
+- Alert
+- FormControl
+- Select
+- MenuItem
+- Paper
+- Divider
+
+Plain HTML elements should only be used when no suitable Material UI component exists.
+
+Target Material UI usage: **90% or higher**.
+
+---
+
+# Design Requirements
+
+The final UI should look almost identical to the current application.
+
+Preserve:
+
+- Dark theme
+- Purple color palette
+- Layout
+- Component positioning
+- Spacing
+- Typography hierarchy
+- Overall user experience
+
+Users should feel they are using the same application.
+
+---
+
+# CSS Usage
+
+App.css should only contain:
+
+- Global styles
+- Fonts
+- Background
+- Gradients
+- Animations
+- Responsive adjustments
+- Small custom overrides
+
+Component styling should primarily use:
+
+- Material UI Theme
+- sx prop
+- Material UI styling system
+
+Avoid creating new custom CSS unless necessary.
 
 ---
 
 # React Development Rules
 
-- Use Functional Components.
-- Preserve existing component names whenever possible.
-- Preserve the current folder structure.
-- Do not introduce unnecessary components.
-- Do not introduce unnecessary third-party libraries.
-- Preserve existing state management.
-- Preserve current API calls.
-- Keep the code modular and easy to understand.
+You are free to refactor the React code if it improves the Material UI integration.
+
+You may:
+
+- Restructure components
+- Replace HTML with Material UI components
+- Improve code organization
+- Improve readability
+- Remove unnecessary code
+
+However:
+
+- Do not change application behavior.
+- Do not change routing.
+- Do not change business logic.
+- Do not modify CRUD functionality.
 
 ---
 
 # Backend Compatibility
 
-This frontend communicates with an existing Spring Boot backend.
+The backend is already complete.
 
-Always preserve:
+Never modify:
 
-- API URLs
-- Fetch requests
-- CRUD operations
+- API endpoints
 - Request bodies
 - Response structures
-- Existing backend integration
+- Authentication flow
+- Session management
+- CRUD logic
 
-Never modify backend-related behavior unless explicitly requested.
-
----
-
-# Material UI Integration Rules
-
-- Replace suitable HTML elements with Material UI components.
-- Prefer Material UI components such as:
-  - Button
-  - TextField
-  - Card
-  - Typography
-  - Container
-  - Box
-  - Stack
-  - Grid
-  - Dialog
-  - Chip
-  - Alert
-
-- Do not replace components that already work well unless Material UI provides a clear improvement.
-- Keep the resulting UI visually similar to the existing design.
+Frontend changes must remain fully compatible with the existing Spring Boot backend.
 
 ---
 
-# AI Working Style
+# AI Working Process
 
-Before making any changes:
+Before making changes:
 
 1. Inspect the existing implementation.
-2. Understand the current component.
-3. Preserve existing behavior.
-4. Make the smallest possible modification.
-5. Explain what was changed after completing the task.
-
-Always prioritize preserving functionality over making visual changes.
+2. Understand the current UI.
+3. Plan the migration.
+4. Convert components to Material UI.
+5. Verify visual consistency.
+6. Explain completed changes.
 
 ---
 
 # AI Behavior
 
-When performing UI transformations:
+When multiple implementation options exist:
 
-- Do not assume requirements that are not explicitly stated.
-- If a design decision is unclear, preserve the existing implementation.
-- Avoid replacing working code unnecessarily.
-- Avoid rewriting entire components when only small modifications are needed.
-- Prefer incremental improvements instead of complete rewrites.
-- Explain the reasoning behind major UI changes.
-- If multiple implementation options exist, choose the one that introduces the fewest changes.
-
----
-
-# Priority Order
-
-When making decisions, always follow this priority:
-
-1. Preserve existing functionality.
-2. Preserve backend compatibility.
-3. Preserve the current visual identity.
-4. Integrate Material UI.
-5. Improve UI consistency.
-6. Improve code readability.
-
-Never sacrifice functionality for visual improvements.
+- Prioritize Material UI usage.
+- Preserve the existing visual appearance.
+- Prefer Material UI components over custom HTML.
+- Use the Material UI Theme system instead of custom CSS whenever possible.
+- Avoid unnecessary visual differences.
+- Explain significant design decisions.
 
 ---
 
-# Expected AI Outcome
+# Expected Result
 
-The resulting application should:
+The final application should:
 
 - Look almost identical to the original design.
-- Continue working exactly as before.
-- Preserve all existing CRUD operations.
-- Use Material UI wherever appropriate.
-- Require minimal manual corrections after the transformation.
+- Use Material UI across at least 90% of the interface.
+- Preserve all existing functionality.
+- Preserve all CRUD operations.
+- Preserve backend compatibility.
+- Be cleaner and more maintainable than the original implementation.

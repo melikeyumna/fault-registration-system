@@ -2,6 +2,14 @@ import { BrowserRouter, Routes, Route, NavLink, Link, Navigate, useNavigate } fr
 import { useEffect, useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
+  AppBar,
+  Toolbar,
+  Container,
+  Grid,
+  Stack,
+  Card,
+  CardContent,
+  CardActions,
   Button,
   TextField,
   Select,
@@ -51,6 +59,19 @@ const theme = createTheme({
           padding: "16px 18px",
           fontSize: 15,
           "&::placeholder": { color: "#7f7896", opacity: 1 },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          padding: "16px 18px",
+          fontSize: 15,
+          backgroundColor: "#09080f",
+          borderRadius: 12,
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
         },
       },
     },
@@ -129,6 +150,7 @@ const cardActionBtnSx = {
   padding: "10px 16px",
   borderRadius: "12px",
   textTransform: "none",
+  fontWeight: 600,
   "&:hover": { background: "#211d32" },
 };
 
@@ -146,6 +168,22 @@ const logoutBtnSx = {
   padding: 0,
   minWidth: "auto",
   "&:hover": { color: "#c4b5fd", background: "transparent" },
+};
+
+const navRegisterBtnSx = {
+  padding: "10px 16px",
+  border: "1px solid #2f2b40",
+  borderRadius: "12px",
+  background: "#11101a",
+  color: "#9c96b4",
+  textTransform: "none",
+  fontSize: 14,
+  fontWeight: 500,
+  "&.active, &:hover": {
+    color: "#c4b5fd",
+    background: "#1a1826",
+    borderColor: "#4c3b73",
+  },
 };
 
 // Chip sx per fault status, copied from the .badge.open / .badge.in_progress /
@@ -237,15 +275,77 @@ function App() {
   if (!isSessionChecked) {
     return (
       <ThemeProvider theme={theme}>
-        <div className="app">
-          <main className="auth-page">
-            <section className="auth-card">
-              <p className="eyebrow">Session Kontrolü</p>
-              <h1>Yükleniyor</h1>
-              <p className="auth-text">Aktif oturum kontrol ediliyor...</p>
-            </section>
-          </main>
-        </div>
+        <Box className="app" sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+          <Container
+            component="main"
+            maxWidth={false}
+            sx={{
+              minHeight: "100vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              py: 7,
+              px: 3,
+            }}
+          >
+            <Card
+              sx={{
+                width: "100%",
+                maxWidth: 520,
+                borderRadius: "18px",
+                background: "#11101a",
+                border: "1px solid #25213a",
+                boxShadow: "0 30px 80px rgba(0, 0, 0, 0.45)",
+              }}
+            >
+              <CardContent sx={{ p: 5.25, "&:last-child": { pb: 5.25 }, textAlign: "center" }}>
+                <Typography
+                  variant="overline"
+                  component="p"
+                  sx={{
+                    color: "#c4b5fd",
+                    letterSpacing: "0.24em",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    lineHeight: 1.5,
+                    mb: 1.5,
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  Session Kontrolü
+                </Typography>
+                <Typography
+                  variant="h2"
+                  component="h1"
+                  sx={{
+                    fontSize: { xs: 38, md: 46 },
+                    fontWeight: 700,
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.02em",
+                    mb: 2,
+                    color: "#f3f2f7",
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  Yükleniyor
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: "#a9a3bf",
+                    lineHeight: 1.7,
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  Aktif oturum kontrol ediliyor...
+                </Typography>
+              </CardContent>
+            </Card>
+          </Container>
+        </Box>
       </ThemeProvider>
     );
   }
@@ -253,7 +353,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-        <div className="app">
+        <Box className="app" sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
           <Navbar currentUser={currentUser} onLogout={askLogout} />
 
           <Routes>
@@ -275,7 +375,7 @@ function App() {
           {showLogoutModal && (
             <LogoutModal onCancel={cancelLogout} onConfirm={confirmLogout} />
           )}
-        </div>
+        </Box>
       </BrowserRouter>
     </ThemeProvider>
   );
@@ -285,15 +385,17 @@ function App() {
 function LogoutModal({ onCancel, onConfirm }) {
   return (
     <Dialog open maxWidth="xs" fullWidth>
-      <DialogTitle sx={{ fontSize: 30, fontWeight: 700 }}>Çıkış Yapılsın mı?</DialogTitle>
+      <DialogTitle sx={{ fontSize: 30, fontWeight: 700, px: 3, pt: 3.75, pb: 1.5 }}>
+        Çıkış Yapılsın mı?
+      </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ px: 3, pb: 3 }}>
         <DialogContentText sx={{ color: "#a9a3bf", lineHeight: 1.7 }}>
           Aktif oturumunuz sonlandırılacaktır. Devam etmek istiyor musunuz?
         </DialogContentText>
       </DialogContent>
 
-      <DialogActions sx={{ padding: "0 24px 24px", gap: "12px" }}>
+      <DialogActions sx={{ padding: "0 24px 24px", gap: "12px", justifyContent: "flex-end" }}>
         <Button sx={secondaryBtnSx} onClick={onCancel}>
           İptal
         </Button>
@@ -308,24 +410,104 @@ function LogoutModal({ onCancel, onConfirm }) {
 
 function Navbar({ currentUser, onLogout }) {
   return (
-    <Box component="nav" className="navbar">
-      <Link to="/" className="brand">Arıza Kayıt Sistemi</Link>
+    <AppBar
+      position="sticky"
+      sx={{
+        height: 82,
+        justifyContent: "center",
+        background: "rgba(5, 4, 10, 0.55)",
+        backdropFilter: "blur(20px)",
+        borderBottom: "1px solid #25213a",
+        boxShadow: "none",
+      }}
+    >
+      <Container maxWidth="lg" sx={{ px: { xs: 3, md: 8 } }}>
+        <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
+          <Typography
+            component={Link}
+            to="/"
+            sx={{
+              fontSize: 18,
+              fontWeight: 800,
+              color: "#f4f4f8",
+              textDecoration: "none",
+            }}
+          >
+            Arıza Kayıt Sistemi
+          </Typography>
 
-      <Box className="nav-links">
-        <NavLink to="/">Ana Sayfa</NavLink>
+          <Stack direction="row" spacing={{ xs: 2, sm: 4 }} alignItems="center">
+            <Button
+              component={NavLink}
+              to="/"
+              sx={{
+                color: "#9c96b4",
+                textTransform: "none",
+                fontSize: 14,
+                fontWeight: 500,
+                minWidth: "auto",
+                padding: 0,
+                "&.active, &:hover": { color: "#c4b5fd", background: "transparent" },
+              }}
+              disableRipple
+            >
+              Ana Sayfa
+            </Button>
 
-        {currentUser && <NavLink to="/faults">Arızalar</NavLink>}
+            {currentUser && (
+              <Button
+                component={NavLink}
+                to="/faults"
+                sx={{
+                  color: "#9c96b4",
+                  textTransform: "none",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  minWidth: "auto",
+                  padding: 0,
+                  "&.active, &:hover": { color: "#c4b5fd", background: "transparent" },
+                }}
+                disableRipple
+              >
+                Arızalar
+              </Button>
+            )}
 
-        {!currentUser ? (
-          <>
-            <NavLink to="/login">Giriş Yap</NavLink>
-            <NavLink to="/register" className="nav-register">Kayıt Ol</NavLink>
-          </>
-        ) : (
-          <Button sx={logoutBtnSx} onClick={onLogout} disableRipple>Çıkış Yap</Button>
-        )}
-      </Box>
-    </Box>
+            {!currentUser ? (
+              <>
+                <Button
+                  component={NavLink}
+                  to="/login"
+                  sx={{
+                    color: "#9c96b4",
+                    textTransform: "none",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    minWidth: "auto",
+                    padding: 0,
+                    "&.active, &:hover": { color: "#c4b5fd", background: "transparent" },
+                  }}
+                  disableRipple
+                >
+                  Giriş Yap
+                </Button>
+                <Button
+                  component={NavLink}
+                  to="/register"
+                  sx={navRegisterBtnSx}
+                >
+                  Kayıt Ol
+                </Button>
+              </>
+            ) : (
+              <Button sx={logoutBtnSx} onClick={onLogout} disableRipple>
+                Çıkış Yap
+              </Button>
+            )}
+          </Stack>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
 
@@ -335,17 +517,54 @@ function Home({ faults, currentUser }) {
   const closed = faults.filter((f) => f.status === "CLOSED").length;
 
   return (
-    <Box component="main" className="home">
-      <Box component="section" className="hero">
-        <Typography component="p" variant="inherit" className="eyebrow">
+    <Box component="main" sx={{ padding: { xs: "60px 24px", md: "90px 64px" } }}>
+      <Box
+        component="section"
+        sx={{
+          maxWidth: 960,
+          margin: "0 auto",
+          textAlign: "center",
+          padding: { xs: "60px 20px", md: "90px 20px" },
+        }}
+      >
+        <Typography
+          component="p"
+          sx={{
+            color: "#c4b5fd",
+            textTransform: "uppercase",
+            letterSpacing: "0.24em",
+            fontSize: 12,
+            fontWeight: 800,
+            margin: 0,
+          }}
+        >
           Arıza Yönetim Sistemi
         </Typography>
 
-        <Typography component="h1" variant="inherit">
+        <Typography
+          component="h1"
+          sx={{
+            fontSize: { xs: 42, md: 68 },
+            lineHeight: 1.1,
+            letterSpacing: "-0.03em",
+            margin: "24px 0",
+            fontWeight: 700,
+            color: "#f3f2f7",
+          }}
+        >
           Arıza Kayıtlarını Kolayca Yönetin.
         </Typography>
 
-        <Typography component="p" variant="inherit" className="hero-text">
+        <Typography
+          component="p"
+          sx={{
+            maxWidth: 640,
+            margin: "0 auto 36px",
+            color: "#a9a3bf",
+            fontSize: 18,
+            lineHeight: 1.7,
+          }}
+        >
           Arıza kayıtlarını oluşturun, takip edin, güncelleyin ve tek bir panel
           üzerinden yönetin.
         </Typography>
@@ -355,7 +574,15 @@ function Home({ faults, currentUser }) {
             Arıza Paneli
           </Button>
         ) : (
-          <Box className="hero-actions">
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "14px",
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: "center",
+            }}
+          >
             <Button component={Link} to="/login" sx={primaryBtnSx}>
               Giriş Yap
             </Button>
@@ -368,7 +595,17 @@ function Home({ faults, currentUser }) {
       </Box>
 
       {currentUser && (
-        <Box component="section" className="stats">
+        <Box
+          component="section"
+          sx={{
+            maxWidth: 1050,
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: { xs: "repeat(2, 1fr)", md: "repeat(4, 1fr)" },
+            gap: "18px",
+            width: "100%",
+          }}
+        >
           <Stat title="Toplam" value={faults.length} />
           <Stat title="Açık" value={open} />
           <Stat title="İşlemde" value={progress} />
@@ -381,10 +618,43 @@ function Home({ faults, currentUser }) {
 
 function Stat({ title, value }) {
   return (
-    <Box className="stat-card">
-      <Typography component="h2" variant="inherit">{value}</Typography>
-      <Typography component="p" variant="inherit">{title}</Typography>
-    </Box>
+    <Card
+      sx={{
+        background: "#11101a",
+        border: "1px solid #25213a",
+        borderRadius: "16px",
+        boxShadow: "0 30px 80px rgba(0, 0, 0, 0.45)",
+      }}
+    >
+      <CardContent sx={{ p: 4.25, "&:last-child": { pb: 4.25 }, textAlign: "center" }}>
+        <Typography
+          variant="h2"
+          sx={{
+            fontSize: 58,
+            fontWeight: 700,
+            letterSpacing: "-0.08em",
+            color: "#f3f2f7",
+            lineHeight: 1.1,
+          }}
+        >
+          {value}
+        </Typography>
+        <Typography
+          variant="caption"
+          component="p"
+          sx={{
+            mt: 1.25,
+            color: "#9c96b4",
+            textTransform: "uppercase",
+            letterSpacing: "0.2em",
+            fontSize: 11,
+            fontWeight: 800,
+          }}
+        >
+          {title}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -424,7 +694,7 @@ function LoginPage({ onLogin }) {
       title="Giriş Yap"
       text="Arıza kayıtlarını görüntülemek ve yönetmek için hesabınıza giriş yapın."
     >
-      <form className="auth-form" onSubmit={handleSubmit}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 1.75 }}>
         <TextField
           type="email"
           placeholder="E-posta"
@@ -450,6 +720,7 @@ function LoginPage({ onLogin }) {
               backgroundColor: "rgba(138, 32, 61, 0.18)",
               color: "#fecaca",
               border: "1px solid rgba(254, 202, 202, 0.15)",
+              borderRadius: "12px",
             }}
           >
             {message}
@@ -457,11 +728,24 @@ function LoginPage({ onLogin }) {
         )}
 
         <Button sx={primaryBtnSx} type="submit">Giriş Yap</Button>
-      </form>
+      </Box>
 
-      <p className="auth-switch">
+      <Typography
+        variant="body2"
+        sx={{
+          color: "#9c96b4",
+          mt: 2.75,
+          textAlign: "center",
+          "& a": {
+            color: "#c4b5fd",
+            fontWeight: 800,
+            textDecoration: "none",
+            "&:hover": { textDecoration: "underline" },
+          },
+        }}
+      >
         Hesabınız yok mu? <Link to="/register">Kayıt olun</Link>
-      </p>
+      </Typography>
     </AuthLayout>
   );
 }
@@ -503,7 +787,7 @@ function RegisterPage({ onLogin }) {
       title="Kayıt Ol"
       text="Arıza kayıt paneline erişmek için yeni bir hesap oluşturun."
     >
-      <form className="auth-form" onSubmit={handleSubmit}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 1.75 }}>
         <TextField
           placeholder="Ad Soyad"
           value={fullName}
@@ -537,6 +821,7 @@ function RegisterPage({ onLogin }) {
               backgroundColor: "rgba(138, 32, 61, 0.18)",
               color: "#fecaca",
               border: "1px solid rgba(254, 202, 202, 0.15)",
+              borderRadius: "12px",
             }}
           >
             {message}
@@ -544,25 +829,103 @@ function RegisterPage({ onLogin }) {
         )}
 
         <Button sx={primaryBtnSx} type="submit">Kayıt Ol</Button>
-      </form>
+      </Box>
 
-      <p className="auth-switch">
+      <Typography
+        variant="body2"
+        sx={{
+          color: "#9c96b4",
+          mt: 2.75,
+          textAlign: "center",
+          "& a": {
+            color: "#c4b5fd",
+            fontWeight: 800,
+            textDecoration: "none",
+            "&:hover": { textDecoration: "underline" },
+          },
+        }}
+      >
         Zaten hesabınız var mı? <Link to="/login">Giriş yapın</Link>
-      </p>
+      </Typography>
     </AuthLayout>
   );
 }
 
 function AuthLayout({ eyebrow, title, text, children }) {
   return (
-    <main className="auth-page">
-      <section className="auth-card">
-        <p className="eyebrow">{eyebrow}</p>
-        <h1>{title}</h1>
-        <p className="auth-text">{text}</p>
-        {children}
-      </section>
-    </main>
+    <Container
+      component="main"
+      maxWidth={false}
+      sx={{
+        minHeight: "calc(100vh - 82px)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        py: 7,
+        px: 3,
+      }}
+    >
+      <Card
+        sx={{
+          width: "100%",
+          maxWidth: 520,
+          borderRadius: "18px",
+          background: "#11101a",
+          border: "1px solid #25213a",
+          boxShadow: "0 30px 80px rgba(0, 0, 0, 0.45)",
+        }}
+      >
+        <CardContent sx={{ p: 5.25, "&:last-child": { pb: 5.25 } }}>
+          <Typography
+            variant="overline"
+            component="p"
+            sx={{
+              color: "#c4b5fd",
+              letterSpacing: "0.24em",
+              fontSize: 12,
+              fontWeight: 800,
+              lineHeight: 1.5,
+              mb: 1.5,
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            {eyebrow}
+          </Typography>
+
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: { xs: 38, md: 46 },
+              fontWeight: 700,
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+              mb: 2,
+              color: "#f3f2f7",
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            {title}
+          </Typography>
+
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#a9a3bf",
+              lineHeight: 1.7,
+              mb: 3.5,
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            {text}
+          </Typography>
+
+          {children}
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
 
@@ -638,107 +1001,206 @@ function FaultsPage({ faults, fetchFaults }) {
   }
 
   return (
-    <main className="dashboard">
-      <section className="panel">
-        <h1>{editingId ? "Arıza Güncelle" : "Yeni Arıza Kaydı"}</h1>
+    <Container component="main" maxWidth="lg" sx={{ py: 7, px: { xs: 3, md: 8 } }}>
+      <Card
+        sx={{
+          borderRadius: "16px",
+          mb: 3.5,
+          background: "#11101a",
+          border: "1px solid #25213a",
+          boxShadow: "0 30px 80px rgba(0, 0, 0, 0.45)",
+        }}
+      >
+        <CardContent sx={{ p: 4.25, "&:last-child": { pb: 4.25 } }}>
+          <Typography
+            variant="h2"
+            component="h1"
+            sx={{
+              margin: "0 0 24px",
+              fontSize: 34,
+              fontWeight: 700,
+              letterSpacing: "-0.06em",
+              color: "#f3f2f7",
+            }}
+          >
+            {editingId ? "Arıza Güncelle" : "Yeni Arıza Kaydı"}
+          </Typography>
 
-        <form onSubmit={handleSubmit} className="fault-form">
-          <TextField
-            placeholder="Başlık"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            fullWidth
-          />
+          <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 1.75 }}>
+            <TextField
+              placeholder="Başlık"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              fullWidth
+            />
 
-          <TextField
-            placeholder="Açıklama"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            fullWidth
-          />
+            <TextField
+              placeholder="Açıklama"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              fullWidth
+            />
 
-          <TextField
-            placeholder="Bildiren Kişi"
-            value={reportedBy}
-            onChange={(e) => setReportedBy(e.target.value)}
-            required
-            fullWidth
-          />
+            <TextField
+              placeholder="Bildiren Kişi"
+              value={reportedBy}
+              onChange={(e) => setReportedBy(e.target.value)}
+              required
+              fullWidth
+            />
 
-          <FormControl fullWidth>
-            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <MenuItem value="OPEN">AÇIK</MenuItem>
-              <MenuItem value="IN_PROGRESS">İŞLEMDE</MenuItem>
-              <MenuItem value="CLOSED">KAPATILDI</MenuItem>
-            </Select>
-          </FormControl>
+            <FormControl fullWidth>
+              <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <MenuItem value="OPEN">AÇIK</MenuItem>
+                <MenuItem value="IN_PROGRESS">İŞLEMDE</MenuItem>
+                <MenuItem value="CLOSED">KAPATILDI</MenuItem>
+              </Select>
+            </FormControl>
 
-          <div className="button-row">
-            <Button sx={primaryBtnSx} type="submit">
-              {editingId ? "Güncelle" : "Arıza Kaydı"}
-            </Button>
-
-            {editingId && (
-              <Button sx={secondaryBtnSx} type="button" onClick={clearForm}>
-                İptal
+            <Stack direction="row" spacing={1.5} sx={{ mt: 2.25 }}>
+              <Button sx={primaryBtnSx} type="submit">
+                {editingId ? "Güncelle" : "Arıza Kaydı"}
               </Button>
-            )}
-          </div>
-        </form>
-      </section>
 
-      <section className="panel">
-        <h1>Arıza Kayıtları</h1>
+              {editingId && (
+                <Button sx={secondaryBtnSx} type="button" onClick={clearForm}>
+                  İptal
+                </Button>
+              )}
+            </Stack>
+          </Box>
+        </CardContent>
+      </Card>
 
-        <Box className="fault-list">
-          {faults.map((fault) => (
-            <Box component="article" className="fault-card" key={fault.id}>
-              <div>
-                <div className="fault-top">
-                  <Typography component="h2" variant="inherit">{fault.title}</Typography>
+      <Card
+        sx={{
+          borderRadius: "16px",
+          background: "#11101a",
+          border: "1px solid #25213a",
+          boxShadow: "0 30px 80px rgba(0, 0, 0, 0.45)",
+        }}
+      >
+        <CardContent sx={{ p: 4.25, "&:last-child": { pb: 4.25 } }}>
+          <Typography
+            variant="h2"
+            component="h1"
+            sx={{
+              margin: "0 0 24px",
+              fontSize: 34,
+              fontWeight: 700,
+              letterSpacing: "-0.06em",
+              color: "#f3f2f7",
+            }}
+          >
+            Arıza Kayıtları
+          </Typography>
 
-                  <Chip
-                    label={statusLabels[fault.status]}
-                    size="small"
+          <Stack spacing={2}>
+            {faults.map((fault) => (
+              <Card
+                key={fault.id}
+                sx={{
+                  background: "#11101a",
+                  border: "1px solid #25213a",
+                  borderRadius: "14px",
+                  boxShadow: "0 30px 80px rgba(0, 0, 0, 0.45)",
+                  transition: "0.2s ease",
+                  "&:hover": {
+                    transform: "translateY(-3px)",
+                    borderColor: "#4c3b73",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 3, "&:last-child": { pb: 1.5 } }}>
+                  <Box
                     sx={{
-                      fontWeight: 800,
-                      fontSize: 12,
-                      ...statusChipSx[fault.status],
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                      mb: 1.5,
                     }}
-                  />
-                </div>
+                  >
+                    <Typography
+                      variant="h6"
+                      component="h2"
+                      sx={{
+                        fontSize: 22,
+                        fontWeight: 600,
+                        color: "#f3f2f7",
+                      }}
+                    >
+                      {fault.title}
+                    </Typography>
 
-                <p>{fault.description}</p>
-                <small>Bildiren: {fault.reportedBy}</small>
-              </div>
+                    <Chip
+                      label={statusLabels[fault.status]}
+                      size="small"
+                      sx={{
+                        fontWeight: 800,
+                        fontSize: 12,
+                        borderRadius: "999px",
+                        padding: "8px 14px",
+                        height: "auto",
+                        "& .MuiChip-label": { padding: 0 },
+                        ...statusChipSx[fault.status],
+                      }}
+                    />
+                  </Box>
 
-              <div className="card-actions">
-                <Button sx={cardActionBtnSx} onClick={() => startEditing(fault)}>
-                  Düzenle
-                </Button>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: "#c7c2d8",
+                      lineHeight: 1.6,
+                      mb: 1.5,
+                    }}
+                  >
+                    {fault.description}
+                  </Typography>
 
-                <Button sx={cardActionDangerBtnSx} onClick={() => askDelete(fault)}>
-                  Sil
-                </Button>
-              </div>
-            </Box>
-          ))}
-        </Box>
-      </section>
+                  <Typography
+                    variant="caption"
+                    component="p"
+                    sx={{
+                      color: "#8f88a8",
+                      fontSize: 12,
+                    }}
+                  >
+                    Bildiren: {fault.reportedBy}
+                  </Typography>
+                </CardContent>
+
+                <CardActions sx={{ px: 3, pb: 3, pt: 0, gap: 1.5, justifyContent: "flex-start" }}>
+                  <Button sx={cardActionBtnSx} onClick={() => startEditing(fault)}>
+                    Düzenle
+                  </Button>
+
+                  <Button sx={cardActionDangerBtnSx} onClick={() => askDelete(fault)}>
+                    Sil
+                  </Button>
+                </CardActions>
+              </Card>
+            ))}
+          </Stack>
+        </CardContent>
+      </Card>
 
       <Dialog open={showDeleteModal} maxWidth="xs" fullWidth>
-        <DialogTitle sx={{ fontSize: 30, fontWeight: 700 }}>Arıza Silinsin mi?</DialogTitle>
+        <DialogTitle sx={{ fontSize: 30, fontWeight: 700, px: 3, pt: 3.75, pb: 1.5 }}>
+          Arıza Silinsin mi?
+        </DialogTitle>
 
-        <DialogContent>
+        <DialogContent sx={{ px: 3, pb: 3 }}>
           <DialogContentText sx={{ color: "#a9a3bf", lineHeight: 1.7 }}>
             "<strong>{faultToDelete?.title}</strong>" adlı arıza kaydı kalıcı olarak silinecektir.
             Devam etmek istiyor musunuz?
           </DialogContentText>
         </DialogContent>
 
-        <DialogActions sx={{ padding: "0 24px 24px", gap: "12px" }}>
+        <DialogActions sx={{ padding: "0 24px 24px", gap: "12px", justifyContent: "flex-end" }}>
           <Button
             sx={secondaryBtnSx}
             onClick={() => {
@@ -754,7 +1216,7 @@ function FaultsPage({ faults, fetchFaults }) {
           </Button>
         </DialogActions>
       </Dialog>
-    </main>
+    </Container>
   );
 }
 
