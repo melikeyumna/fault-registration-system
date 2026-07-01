@@ -1,6 +1,166 @@
 import { BrowserRouter, Routes, Route, NavLink, Link, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import {
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Alert,
+  Box,
+  Typography,
+  Chip,
+} from "@mui/material";
 import "./App.css";
+
+// MUI theme mirroring the existing dark / purple design tokens defined in App.css.
+// Colors, radii and spacing values below are copied 1:1 from App.css so the
+// visual language stays unchanged after introducing Material UI components.
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: { main: "#7c3aed", light: "#c4b5fd", dark: "#4c1d95" },
+    secondary: { main: "#805aba" },
+    background: { default: "#05040a", paper: "#11101a" },
+    text: { primary: "#f3f2f7", secondary: "#a9a3bf" },
+  },
+  typography: {
+    fontFamily: '"Manrope", sans-serif',
+  },
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#09080f",
+          borderRadius: 12,
+          color: "#fff",
+          "& fieldset": { borderColor: "#25213a" },
+          "&:hover fieldset": { borderColor: "#25213a" },
+          "&.Mui-focused fieldset": {
+            borderColor: "#7c3aed",
+            boxShadow: "0 0 0 3px rgba(124, 58, 237, 0.15)",
+          },
+        },
+        input: {
+          padding: "16px 18px",
+          fontSize: 15,
+          "&::placeholder": { color: "#7f7896", opacity: 1 },
+        },
+      },
+    },
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#11101a",
+          border: "1px solid #25213a",
+          color: "#fff",
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&:hover": { backgroundColor: "#1a1826" },
+          "&.Mui-selected": { backgroundColor: "#242034" },
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#11101a",
+          border: "1px solid #2f2b40",
+          borderRadius: 18,
+          boxShadow: "0 40px 100px rgba(0, 0, 0, 0.6)",
+        },
+      },
+    },
+  },
+});
+
+// Button style objects copied from the existing .primary-btn / .secondary-btn /
+// .delete-confirm-btn / card-actions button rules in App.css, applied via sx
+// so MUI's default Button styling never overrides the current design.
+const primaryBtnSx = {
+  background: "#805aba",
+  color: "#f5f5f5",
+  border: "1px solid #2f2b40",
+  borderRadius: "14px",
+  padding: "14px 24px",
+  fontWeight: 800,
+  fontSize: 14,
+  textTransform: "none",
+  "&:hover": { background: "#242034", borderColor: "#46405d" },
+};
+
+const secondaryBtnSx = {
+  background: "#11101a",
+  color: "white",
+  border: "1px solid #25213a",
+  borderRadius: "14px",
+  padding: "14px 24px",
+  fontWeight: 800,
+  fontSize: 14,
+  textTransform: "none",
+  "&:hover": { background: "#1a1826" },
+};
+
+const dangerBtnSx = {
+  background: "#8a203d",
+  color: "white",
+  border: "none",
+  borderRadius: "12px",
+  padding: "14px 22px",
+  fontWeight: 700,
+  textTransform: "none",
+  "&:hover": { background: "#a32649" },
+};
+
+const cardActionBtnSx = {
+  border: "1px solid #25213a",
+  background: "#151321",
+  color: "white",
+  padding: "10px 16px",
+  borderRadius: "12px",
+  textTransform: "none",
+  "&:hover": { background: "#211d32" },
+};
+
+const cardActionDangerBtnSx = {
+  ...cardActionBtnSx,
+  color: "#fecaca",
+  "&:hover": { background: "#3b111d" },
+};
+
+const logoutBtnSx = {
+  color: "#9c96b4",
+  textTransform: "none",
+  fontWeight: 400,
+  fontSize: 14,
+  padding: 0,
+  minWidth: "auto",
+  "&:hover": { color: "#c4b5fd", background: "transparent" },
+};
+
+// Chip sx per fault status, copied from the .badge.open / .badge.in_progress /
+// .badge.closed rules in App.css.
+const statusChipSx = {
+  OPEN: { backgroundColor: "rgba(34, 197, 94, 0.14)", color: "#86efac" },
+  IN_PROGRESS: { backgroundColor: "rgba(250, 204, 21, 0.14)", color: "#fde68a" },
+  CLOSED: { backgroundColor: "rgba(124, 58, 237, 0.16)", color: "#c4b5fd" },
+};
+
+const statusLabels = {
+  OPEN: "Açık",
+  IN_PROGRESS: "İşlemde",
+  CLOSED: "Kapatıldı",
+};
 
 const API_URL = "http://localhost:8080/faults";
 const AUTH_URL = "http://localhost:8080/auth";
@@ -76,78 +236,82 @@ function App() {
 
   if (!isSessionChecked) {
     return (
-      <div className="app">
-        <main className="auth-page">
-          <section className="auth-card">
-            <p className="eyebrow">Session Kontrolü</p>
-            <h1>Yükleniyor</h1>
-            <p className="auth-text">Aktif oturum kontrol ediliyor...</p>
-          </section>
-        </main>
-      </div>
+      <ThemeProvider theme={theme}>
+        <div className="app">
+          <main className="auth-page">
+            <section className="auth-card">
+              <p className="eyebrow">Session Kontrolü</p>
+              <h1>Yükleniyor</h1>
+              <p className="auth-text">Aktif oturum kontrol ediliyor...</p>
+            </section>
+          </main>
+        </div>
+      </ThemeProvider>
     );
   }
 
   return (
-    <BrowserRouter>
-      <div className="app">
-        <Navbar currentUser={currentUser} onLogout={askLogout} />
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <div className="app">
+          <Navbar currentUser={currentUser} onLogout={askLogout} />
 
-        <Routes>
-          <Route path="/" element={<Home faults={faults} currentUser={currentUser} />} />
-          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
-          <Route path="/register" element={<RegisterPage onLogin={handleLogin} />} />
-          <Route
-            path="/faults"
-            element={
-              currentUser ? (
-                <FaultsPage faults={faults} fetchFaults={fetchFaults} />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-        </Routes>
+          <Routes>
+            <Route path="/" element={<Home faults={faults} currentUser={currentUser} />} />
+            <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+            <Route path="/register" element={<RegisterPage onLogin={handleLogin} />} />
+            <Route
+              path="/faults"
+              element={
+                currentUser ? (
+                  <FaultsPage faults={faults} fetchFaults={fetchFaults} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+          </Routes>
 
-        {showLogoutModal && (
-          <LogoutModal onCancel={cancelLogout} onConfirm={confirmLogout} />
-        )}
-      </div>
-    </BrowserRouter>
+          {showLogoutModal && (
+            <LogoutModal onCancel={cancelLogout} onConfirm={confirmLogout} />
+          )}
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
 
 function LogoutModal({ onCancel, onConfirm }) {
   return (
-    <div className="modal-backdrop">
-      <div className="delete-modal">
-        <h2>Çıkış Yapılsın mı?</h2>
+    <Dialog open maxWidth="xs" fullWidth>
+      <DialogTitle sx={{ fontSize: 30, fontWeight: 700 }}>Çıkış Yapılsın mı?</DialogTitle>
 
-        <p>
+      <DialogContent>
+        <DialogContentText sx={{ color: "#a9a3bf", lineHeight: 1.7 }}>
           Aktif oturumunuz sonlandırılacaktır. Devam etmek istiyor musunuz?
-        </p>
+        </DialogContentText>
+      </DialogContent>
 
-        <div className="modal-actions">
-          <button className="secondary-btn" onClick={onCancel}>
-            İptal
-          </button>
+      <DialogActions sx={{ padding: "0 24px 24px", gap: "12px" }}>
+        <Button sx={secondaryBtnSx} onClick={onCancel}>
+          İptal
+        </Button>
 
-          <button className="logout-confirm-btn" onClick={onConfirm}>
-            Çıkış Yap
-          </button>
-        </div>
-      </div>
-    </div>
+        <Button sx={dangerBtnSx} onClick={onConfirm}>
+          Çıkış Yap
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
 function Navbar({ currentUser, onLogout }) {
   return (
-    <nav className="navbar">
+    <Box component="nav" className="navbar">
       <Link to="/" className="brand">Arıza Kayıt Sistemi</Link>
 
-      <div className="nav-links">
+      <Box className="nav-links">
         <NavLink to="/">Ana Sayfa</NavLink>
 
         {currentUser && <NavLink to="/faults">Arızalar</NavLink>}
@@ -158,10 +322,10 @@ function Navbar({ currentUser, onLogout }) {
             <NavLink to="/register" className="nav-register">Kayıt Ol</NavLink>
           </>
         ) : (
-          <button className="logout-btn" onClick={onLogout}>Çıkış Yap</button>
+          <Button sx={logoutBtnSx} onClick={onLogout} disableRipple>Çıkış Yap</Button>
         )}
-      </div>
-    </nav>
+      </Box>
+    </Box>
   );
 }
 
@@ -171,52 +335,56 @@ function Home({ faults, currentUser }) {
   const closed = faults.filter((f) => f.status === "CLOSED").length;
 
   return (
-    <main className="home">
-      <section className="hero">
-        <p className="eyebrow">Arıza Yönetim Sistemi</p>
+    <Box component="main" className="home">
+      <Box component="section" className="hero">
+        <Typography component="p" variant="inherit" className="eyebrow">
+          Arıza Yönetim Sistemi
+        </Typography>
 
-        <h1>Arıza Kayıtlarını Kolayca Yönetin.</h1>
+        <Typography component="h1" variant="inherit">
+          Arıza Kayıtlarını Kolayca Yönetin.
+        </Typography>
 
-        <p className="hero-text">
+        <Typography component="p" variant="inherit" className="hero-text">
           Arıza kayıtlarını oluşturun, takip edin, güncelleyin ve tek bir panel
           üzerinden yönetin.
-        </p>
+        </Typography>
 
         {currentUser ? (
-          <Link to="/faults" className="primary-btn">
+          <Button component={Link} to="/faults" sx={primaryBtnSx}>
             Arıza Paneli
-          </Link>
+          </Button>
         ) : (
-          <div className="hero-actions">
-            <Link to="/login" className="primary-btn">
+          <Box className="hero-actions">
+            <Button component={Link} to="/login" sx={primaryBtnSx}>
               Giriş Yap
-            </Link>
+            </Button>
 
-            <Link to="/register" className="secondary-btn">
+            <Button component={Link} to="/register" sx={secondaryBtnSx}>
               Kayıt Ol
-            </Link>
-          </div>
+            </Button>
+          </Box>
         )}
-      </section>
+      </Box>
 
       {currentUser && (
-        <section className="stats">
+        <Box component="section" className="stats">
           <Stat title="Toplam" value={faults.length} />
           <Stat title="Açık" value={open} />
           <Stat title="İşlemde" value={progress} />
           <Stat title="Kapatıldı" value={closed} />
-        </section>
+        </Box>
       )}
-    </main>
+    </Box>
   );
 }
 
 function Stat({ title, value }) {
   return (
-    <div className="stat-card">
-      <h2>{value}</h2>
-      <p>{title}</p>
-    </div>
+    <Box className="stat-card">
+      <Typography component="h2" variant="inherit">{value}</Typography>
+      <Typography component="p" variant="inherit">{title}</Typography>
+    </Box>
   );
 }
 
@@ -257,25 +425,38 @@ function LoginPage({ onLogin }) {
       text="Arıza kayıtlarını görüntülemek ve yönetmek için hesabınıza giriş yapın."
     >
       <form className="auth-form" onSubmit={handleSubmit}>
-        <input
+        <TextField
           type="email"
           placeholder="E-posta"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          fullWidth
         />
 
-        <input
+        <TextField
           type="password"
           placeholder="Şifre"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          fullWidth
         />
 
-        {message && <p className="form-message error-message">{message}</p>}
+        {message && (
+          <Alert
+            severity="error"
+            sx={{
+              backgroundColor: "rgba(138, 32, 61, 0.18)",
+              color: "#fecaca",
+              border: "1px solid rgba(254, 202, 202, 0.15)",
+            }}
+          >
+            {message}
+          </Alert>
+        )}
 
-        <button className="primary-btn" type="submit">Giriş Yap</button>
+        <Button sx={primaryBtnSx} type="submit">Giriş Yap</Button>
       </form>
 
       <p className="auth-switch">
@@ -323,32 +504,46 @@ function RegisterPage({ onLogin }) {
       text="Arıza kayıt paneline erişmek için yeni bir hesap oluşturun."
     >
       <form className="auth-form" onSubmit={handleSubmit}>
-        <input
+        <TextField
           placeholder="Ad Soyad"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           required
+          fullWidth
         />
 
-        <input
+        <TextField
           type="email"
           placeholder="E-posta"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          fullWidth
         />
 
-        <input
+        <TextField
           type="password"
           placeholder="Şifre"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          fullWidth
         />
 
-        {message && <p className="form-message error-message">{message}</p>}
+        {message && (
+          <Alert
+            severity="error"
+            sx={{
+              backgroundColor: "rgba(138, 32, 61, 0.18)",
+              color: "#fecaca",
+              border: "1px solid rgba(254, 202, 202, 0.15)",
+            }}
+          >
+            {message}
+          </Alert>
+        )}
 
-        <button className="primary-btn" type="submit">Kayıt Ol</button>
+        <Button sx={primaryBtnSx} type="submit">Kayıt Ol</Button>
       </form>
 
       <p className="auth-switch">
@@ -448,42 +643,47 @@ function FaultsPage({ faults, fetchFaults }) {
         <h1>{editingId ? "Arıza Güncelle" : "Yeni Arıza Kaydı"}</h1>
 
         <form onSubmit={handleSubmit} className="fault-form">
-          <input
+          <TextField
             placeholder="Başlık"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            fullWidth
           />
 
-          <input
+          <TextField
             placeholder="Açıklama"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            fullWidth
           />
 
-          <input
+          <TextField
             placeholder="Bildiren Kişi"
             value={reportedBy}
             onChange={(e) => setReportedBy(e.target.value)}
             required
+            fullWidth
           />
 
-          <select value={status} onChange={(e) => setStatus(e.target.value)}>
-            <option value="OPEN">AÇIK</option>
-            <option value="IN_PROGRESS">İŞLEMDE</option>
-            <option value="CLOSED">KAPATILDI</option>
-          </select>
+          <FormControl fullWidth>
+            <Select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <MenuItem value="OPEN">AÇIK</MenuItem>
+              <MenuItem value="IN_PROGRESS">İŞLEMDE</MenuItem>
+              <MenuItem value="CLOSED">KAPATILDI</MenuItem>
+            </Select>
+          </FormControl>
 
           <div className="button-row">
-            <button className="primary-btn" type="submit">
+            <Button sx={primaryBtnSx} type="submit">
               {editingId ? "Güncelle" : "Arıza Kaydı"}
-            </button>
+            </Button>
 
             {editingId && (
-              <button className="secondary-btn" type="button" onClick={clearForm}>
+              <Button sx={secondaryBtnSx} type="button" onClick={clearForm}>
                 İptal
-              </button>
+              </Button>
             )}
           </div>
         </form>
@@ -492,20 +692,22 @@ function FaultsPage({ faults, fetchFaults }) {
       <section className="panel">
         <h1>Arıza Kayıtları</h1>
 
-        <div className="fault-list">
+        <Box className="fault-list">
           {faults.map((fault) => (
-            <article className="fault-card" key={fault.id}>
+            <Box component="article" className="fault-card" key={fault.id}>
               <div>
                 <div className="fault-top">
-                  <h2>{fault.title}</h2>
+                  <Typography component="h2" variant="inherit">{fault.title}</Typography>
 
-                  <span className={`badge ${fault.status.toLowerCase()}`}>
-                    {fault.status === "OPEN"
-                      ? "Açık"
-                      : fault.status === "IN_PROGRESS"
-                      ? "İşlemde"
-                      : "Kapatıldı"}
-                  </span>
+                  <Chip
+                    label={statusLabels[fault.status]}
+                    size="small"
+                    sx={{
+                      fontWeight: 800,
+                      fontSize: 12,
+                      ...statusChipSx[fault.status],
+                    }}
+                  />
                 </div>
 
                 <p>{fault.description}</p>
@@ -513,45 +715,45 @@ function FaultsPage({ faults, fetchFaults }) {
               </div>
 
               <div className="card-actions">
-                <button onClick={() => startEditing(fault)}>Düzenle</button>
+                <Button sx={cardActionBtnSx} onClick={() => startEditing(fault)}>
+                  Düzenle
+                </Button>
 
-                <button className="danger" onClick={() => askDelete(fault)}>
+                <Button sx={cardActionDangerBtnSx} onClick={() => askDelete(fault)}>
                   Sil
-                </button>
+                </Button>
               </div>
-            </article>
+            </Box>
           ))}
-        </div>
+        </Box>
       </section>
 
-      {showDeleteModal && (
-        <div className="modal-backdrop">
-          <div className="delete-modal">
-            <h2>Arıza Silinsin mi?</h2>
+      <Dialog open={showDeleteModal} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ fontSize: 30, fontWeight: 700 }}>Arıza Silinsin mi?</DialogTitle>
 
-            <p>
-              "<strong>{faultToDelete?.title}</strong>" adlı arıza kaydı kalıcı olarak silinecektir.
-              Devam etmek istiyor musunuz?
-            </p>
+        <DialogContent>
+          <DialogContentText sx={{ color: "#a9a3bf", lineHeight: 1.7 }}>
+            "<strong>{faultToDelete?.title}</strong>" adlı arıza kaydı kalıcı olarak silinecektir.
+            Devam etmek istiyor musunuz?
+          </DialogContentText>
+        </DialogContent>
 
-            <div className="modal-actions">
-              <button
-                className="secondary-btn"
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setFaultToDelete(null);
-                }}
-              >
-                İptal
-              </button>
+        <DialogActions sx={{ padding: "0 24px 24px", gap: "12px" }}>
+          <Button
+            sx={secondaryBtnSx}
+            onClick={() => {
+              setShowDeleteModal(false);
+              setFaultToDelete(null);
+            }}
+          >
+            İptal
+          </Button>
 
-              <button className="delete-confirm-btn" onClick={confirmDelete}>
-                Sil
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          <Button sx={dangerBtnSx} onClick={confirmDelete}>
+            Sil
+          </Button>
+        </DialogActions>
+      </Dialog>
     </main>
   );
 }
